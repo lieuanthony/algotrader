@@ -7,10 +7,10 @@ class Stock:
         self.high_price = inital_public_offering
         self.low_price = inital_public_offering
 
-    def update_open_price(self, other_price: float):
+    def update_open_price(self, other_price: float) -> None:
         self.open_price = other_price
 
-    def update_current_high_low_prices(self, other_price: float):
+    def update_current_high_low_prices(self, other_price: float) -> None:
         self.current_price = other_price
 
         if other_price > self.high_price:

@@ -10,7 +10,7 @@ class Portfolio:
         self.total_assets = 0.0
         self.total_losses = 0.0
 
-    def buy_stock(self, stock: Stock):
+    def buy_stock(self, stock: Stock) -> None:
         self.available_funds -= stock.get_current_price
 
         if stock in self.stocks.keys:
@@ -18,9 +18,9 @@ class Portfolio:
         else:
             self.stocks[stock] = 1
 
-    def sell_stock(self, stock: Stock):
+    def sell_stock(self, stock: Stock) -> None:
         self.available_funds += stock.get_current_price
         self.stocks[stock] -= 1
-        
+
         if self.stocks[stock] == 0:
             self.stocks.pop(stock)
