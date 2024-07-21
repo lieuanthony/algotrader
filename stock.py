@@ -17,3 +17,15 @@ class Stock:
             self.high_price = other_price
         elif other_price < self.low_price:
             self.low_price = other_price
+
+    def get_open_price(self) -> float:
+        return self.open_price
+    
+    def get_current_price(self) -> float:
+        return self.current_price
+    
+    def get_high_price(self) -> float:
+        return self.high_price
+    
+    def get_low_price(self) -> float:
+        return self.low_price
