@@ -1,5 +1,5 @@
 class Stock:
-    __slots__ = ["name","open_price", "current_price", "high_price", "low_price"]
+    __slots__ = ["name", "open_price", "current_price", "high_price", "low_price"]
 
     def __init__(self, name, ipo: float):
         self.name = name
@@ -33,3 +33,6 @@ class Stock:
     
     def get_low_price(self) -> float:
         return self.low_price
+    
+    def __repr__(self) -> str:
+        return self.name + " @ $" + str(round(self.current_price, 2))

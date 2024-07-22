@@ -2,7 +2,7 @@ from stock import *
 from portfolio import *
 import random
 
-def create_random_stocks(num_stocks: int) -> list[Stock]:
+def generate_random_stocks(num_stocks: int) -> list[Stock]:
     stocks = []
 
     for i in range(num_stocks):
@@ -18,7 +18,8 @@ def create_random_stocks(num_stocks: int) -> list[Stock]:
     return stocks
 
 def main():
-    ...
+    stocks = generate_random_stocks(50)
+    print(stocks)
 
 if __name__ == "__main__":
     main()
