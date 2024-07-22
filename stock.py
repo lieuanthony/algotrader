@@ -1,12 +1,12 @@
 class Stock:
     __slots__ = ["name","open_price", "current_price", "high_price", "low_price"]
 
-    def __init__(self, name, inital_public_offering: float):
+    def __init__(self, name, ipo: float):
         self.name = name
-        self.open_price = inital_public_offering
-        self.current_price = inital_public_offering
-        self.high_price = inital_public_offering
-        self.low_price = inital_public_offering
+        self.open_price = ipo
+        self.current_price = ipo
+        self.high_price = ipo
+        self.low_price = ipo
 
     def set_open_price(self, other_price: float) -> None:
         self.open_price = other_price
