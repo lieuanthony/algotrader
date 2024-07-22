@@ -2,6 +2,20 @@ from stock import *
 from portfolio import *
 import random
 
+class Market:
+    __slots__ = ["stocks", "status", "volatility"]
+
+    def __init__(self, stocks: list[Stock], volatility: float):
+        self.stocks = stocks
+        self.status = True # True = open; False = closed
+        self.volatility = volatility
+
+    def switch_status(self):
+        self.status = not self.status
+
+    def is_open(self) -> bool:
+        return self.status == True
+
 def generate_random_stocks(num_stocks: int) -> list[Stock]:
     stocks: list[Stock] = []
 
