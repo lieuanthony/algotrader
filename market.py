@@ -3,22 +3,30 @@ from portfolio import *
 import random
 
 def generate_random_stocks(num_stocks: int) -> list[Stock]:
-    stocks = []
+    stocks: list[Stock] = []
 
-    for i in range(num_stocks):
-        name = ""
-        num_letters = random.randint(2, 4)
+    for _ in range(num_stocks):
+        name: str = ""
+        num_letters: int = random.randint(2, 4)
         
-        for j in range(num_letters):
+        for _ in range(num_letters):
             name += chr(random.randint(ord('A'), ord('Z')))
 
-        stock = Stock(name, random.uniform(5.0, 50.0))
+        stock: Stock = Stock(name, random.uniform(5.0, 50.0))
         stocks.append(stock)
 
     return stocks
 
 def main():
-    stocks = generate_random_stocks(50)
+    print(           
+    " _____ _         _____           _         \n"
+    "|  _  | |___ ___|_   _|___ ___ _| |___ ___ \n"
+    "|     | | . | . | | | |  _| .'| . | -_|  _|\n"
+    "|__|__|_|_  |___| |_| |_| |__,|___|___|_|  \n"
+    "        |___|                              \n"                 
+    )
+
+    stocks: list[Stock] = generate_random_stocks(10)
     print(stocks)
 
 if __name__ == "__main__":
