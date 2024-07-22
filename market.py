@@ -12,7 +12,7 @@ def generate_random_stocks(num_stocks: int) -> list[Stock]:
         for _ in range(num_letters):
             name += chr(random.randint(ord('A'), ord('Z')))
 
-        stock: Stock = Stock(name, random.uniform(5.0, 50.0))
+        stock: Stock = Stock(name, random.uniform(1.0, 100.0))
         stocks.append(stock)
 
     return stocks
