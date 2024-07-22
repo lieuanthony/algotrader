@@ -39,7 +39,7 @@ class Portfolio:
             self.stocks.pop(stock)
 
     def update_returns(self) -> None:
-        returns: float = 0
+        returns: float = 0.0
 
         for stock in self.stocks:
             current_price: float = stock.get_current_price
