@@ -42,8 +42,14 @@ class Portfolio:
         returns: float = 0
 
         for stock in self.stocks:
-            if stock.get_current_price > self.stocks[0]:
+            current_price: float = stock.get_current_price
+            quantity: int = self.stocks[stock][1]
+            if current_price > self.stocks[stock][0]:
+                returns += current_price * quantity
+            else:
+                returns -= current_price * quantity
 
+        self.returns = returns
 
     def get_stocks(self) -> dict[Stock, (float, int)]: # type: ignore
         return self.stocks
