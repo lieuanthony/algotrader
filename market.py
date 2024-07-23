@@ -42,8 +42,9 @@ class Market:
 
     def crash(self) -> None:
         for stock in self.stocks:
-            stock.update_prices(stock.get_current_price() * 0.9)
-            self.stocks[stock] -= (self.stocks[stock] * 0.25)
+            change: float = random.uniform(0.75, 0.90)
+            stock.update_prices(stock.get_current_price() * change)
+            self.stocks[stock] -= (self.stocks[stock] * change)
 
     def get_stocks(self) -> dict[Stock, float]:
         return self.stocks
