@@ -17,16 +17,14 @@ class Market:
             chance: int = random.randint(1, 3)
 
             if (performance >= 0.75 and chance > 1) or (performance <= 0.25 and chance < 2):
-                price_change = random.uniform(-0.01, 0.025)
-                self.stocks[stock] *= (1 + price_change)
+                price_change = random.uniform(-0.01, 0.02)
             elif (performance >= 0.75 and chance < 2) or (performance <= 0.25 and chance > 1):
-                price_change = random.uniform(-0.025, 0.01)
-                self.stocks[stock] *= (1 + price_change)
+                price_change = random.uniform(-0.02, 0.01)
             else:
-                price_change = random.uniform(-0.025, 0.025)
-                self.stocks[stock] *= (1 + price_change)
+                price_change = random.uniform(-0.02, 0.02)
 
             stock.update_prices(stock.get_current_price() * (1 + price_change))
+            self.stocks[stock] *= (1 + price_change)
 
             chance = random.randint(1, 10)
             if chance == 1:
