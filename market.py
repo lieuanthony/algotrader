@@ -6,7 +6,7 @@ import time
 class Market:
     __slots__ = ["stocks", "time"]
 
-    def __init__(self, stocks: dict[Stock, float]): # Stock : performance
+    def __init__(self, stocks: dict[Stock, (float, int)]): # Stock : (performance, streak)
         self.stocks = stocks
         self.time = 9   # 9 instead of 9:30 for convenience
     
@@ -27,9 +27,14 @@ class Market:
 
             chance = random.randint(1, 20)
             if chance == 1:
-                self.stocks[stock] += 0.05
+                self.stocks[stock] *= 1.05
             elif chance == 20:
-                self.stocks[stock] -= 0.05
+                self.stocks[stock] *= 0.95
+
+            if self.stocks[stock] > 1.0:
+                self.stocks[stock] = 1.0
+            elif self.stocks[stock] < 0.0:
+                self.stocks[stock] = 0.0
 
     def update_time(self) -> None:
         if self.time == 16:
@@ -44,7 +49,8 @@ class Market:
         for stock in self.stocks:
             change: float = random.uniform(0.75, 0.90)
             stock.update_prices(stock.get_current_price() * change)
-            self.stocks[stock] -= (self.stocks[stock] * change)
+            stock.set_open_price(stock.get_current_price())
+            self.stocks[stock] = (self.stocks[stock] * change)
 
     def get_stocks(self) -> dict[Stock, float]:
         return self.stocks
@@ -72,6 +78,11 @@ def generate_random_stocks(num_stocks: int) -> dict[Stock, float]:
 
 def simulate_market(market: Market, num_days: int) -> None:
     for _ in range(num_days):
+        chance: int = random.randint(1, 100)
+        if chance == 1:
+            print("\nMarket is crashing!!!")
+            market.crash()
+
         print("\nMarket is now open!")
 
         for hour in range(8):
