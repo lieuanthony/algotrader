@@ -16,6 +16,9 @@ class Market:
             price_change: float = 0.0
             chance: int = random.randint(1, 3)
 
+            # when market opens, price changes are more volatile
+            # add daily performance and overall performance
+            # if overall bad but daily good, price change good but not as good as stock with overall good performance
             if (performance >= 0.75 and chance > 1) or (performance <= 0.25 and chance < 2):
                 price_change = random.uniform(-0.01, 0.02)
             elif (performance >= 0.75 and chance < 2) or (performance <= 0.25 and chance > 1):
@@ -25,12 +28,6 @@ class Market:
 
             stock.update_prices(stock.get_current_price() * (1 + price_change))
             self.stocks[stock] *= (1 + price_change)
-
-            chance = random.randint(1, 10)
-            if chance == 1:
-                self.stocks[stock] *= 0.95
-            elif chance == 10:
-                self.stocks[stock] *= 1.05
 
             if self.stocks[stock] > 1.0:
                 self.stocks[stock] = 1.0
@@ -48,7 +45,7 @@ class Market:
 
     def crash(self) -> None:
         for stock in self.stocks:
-            change: float = random.uniform(0.75, 0.85)
+            change: float = random.uniform(0.5, 0.9)
             stock.update_prices(stock.get_current_price() * change)
             stock.set_open_price(stock.get_current_price())
             self.stocks[stock] = (self.stocks[stock] * change)
