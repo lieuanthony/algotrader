@@ -12,8 +12,24 @@ class Market:
     
     def update_prices(self) -> None:
         for stock in self.stocks:
-            price_change: float = random.uniform(-0.05, 0.05)
+            performance: float = self.stocks[stock]
+            price_change: float = 0.0
+            chance: int = random.randint(1, 3)
+
+            if (performance >= 0.5 and chance > 1) or (performance < 0.5 and chance == 1):
+                price_change = random.uniform(-0.01, 0.025)
+                self.stocks[stock] += abs(price_change)
+            else:
+                price_change = random.uniform(-0.025, 0.01)
+                self.stocks[stock] -= abs(price_change)
+
             stock.update_prices(stock.get_current_price() * (1 + price_change))
+
+            chance = random.randint(1, 20)
+            if chance == 1:
+                self.stocks[stock] += 0.05
+            elif chance == 20:
+                self.stocks[stock] -= 0.05
 
     def update_time(self) -> None:
         if self.time == 16:
@@ -23,6 +39,11 @@ class Market:
             self.time = 9
         else:
             self.time += 1
+
+    def crash(self) -> None:
+        for stock in self.stocks:
+            stock.update_prices(stock.get_current_price() * 0.9)
+            self.stocks[stock] -= (self.stocks[stock] * 0.25)
 
     def get_stocks(self) -> dict[Stock, float]:
         return self.stocks
@@ -53,7 +74,7 @@ def simulate_market(market: Market, num_days: int) -> None:
         print("\nMarket is now open!")
 
         for hour in range(8):
-            print(str(market.get_time()) + ":00 - " + str(list(market.get_stocks().keys())))
+            print(str(market.get_time()) + ":00 - " + str(market.get_stocks()))
             market.update_time()
 
             if hour < 7:
