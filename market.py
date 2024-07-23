@@ -4,21 +4,32 @@ import random
 import time
 
 class Market:
-    __slots__ = ["stocks", "status"]
+    __slots__ = ["stocks", "status", "time"]
 
     def __init__(self, stocks: dict[Stock, float]): # Stock : performance
         self.stocks = stocks
         self.status = True # True = open; False = closed
-
-    def switch_status(self) -> None:
-        self.status = not self.status
-
-    def is_open(self) -> bool:
-        return self.status == True
+        self.time = 9   # 9 instead of 9:30 for convenience
     
     def update_prices(self, other_price) -> None:
         for stock in self.stocks:
             stock.update_prices(other_price)
+
+    def update_time(self) -> None:
+        if time == 16:
+            self.status = False
+        else:
+            time += 1
+
+    def get_stocks(self) -> dict[Stock, float]:
+        return self.stocks
+    
+    def set_status_open(self) -> None:
+        self.time = 9
+        self.status = True
+    
+    def is_open(self) -> bool:
+        return self.status == True
 
 def generate_random_stocks(num_stocks: int) -> dict[Stock, float]:
     stocks: dict[Stock,float] = dict()
@@ -37,6 +48,11 @@ def generate_random_stocks(num_stocks: int) -> dict[Stock, float]:
             stocks[stock] = 0.5
 
     return stocks
+
+def simulate_market(market: Market, num_days: int):
+    for i in range(num_days):
+        market.update_prices(5)
+        print(market.get_stocks())
 
 def main():
     print(           
@@ -62,9 +78,7 @@ def main():
     stocks: list[Stock] = generate_random_stocks(num_stocks)
     market: Market = Market(stocks)
 
-    for i in range(num_days):
-        market.update_prices(5)
-        print(stocks)
+    simulate_market(market, num_days)
 
 if __name__ == "__main__":
     main()
