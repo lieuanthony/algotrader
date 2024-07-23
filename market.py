@@ -1,33 +1,40 @@
 from stock import *
 from portfolio import *
 import random
+import time
 
 class Market:
-    __slots__ = ["stocks", "status", "volatility"]
+    __slots__ = ["stocks", "status"]
 
-    def __init__(self, stocks: list[Stock], volatility: float):
+    def __init__(self, stocks: dict[Stock, float]): # Stock : performance
         self.stocks = stocks
         self.status = True # True = open; False = closed
-        self.volatility = volatility
 
-    def switch_status(self):
+    def switch_status(self) -> None:
         self.status = not self.status
 
     def is_open(self) -> bool:
         return self.status == True
+    
+    def update_prices(self, other_price) -> None:
+        for stock in self.stocks:
+            stock.update_prices(other_price)
 
-def generate_random_stocks(num_stocks: int) -> list[Stock]:
-    stocks: list[Stock] = []
+def generate_random_stocks(num_stocks: int) -> dict[Stock, float]:
+    stocks: dict[Stock,float] = dict()
 
-    for _ in range(num_stocks):
+    while len(stocks.keys()) < num_stocks:
         name: str = ""
         num_letters: int = random.randint(2, 4)
         
         for _ in range(num_letters):
             name += chr(random.randint(ord('A'), ord('Z')))
 
-        stock: Stock = Stock(name, random.uniform(1.0, 100.0))
-        stocks.append(stock)
+        if name in stocks.keys():
+            continue
+        else:
+            stock: Stock = Stock(name, random.uniform(1.0, 100.0))
+            stocks[stock] = 0.5
 
     return stocks
 
@@ -37,11 +44,27 @@ def main():
     "|  _  | |___ ___|_   _|___ ___ _| |___ ___ \n"
     "|     | | . | . | | | |  _| .'| . | -_|  _|\n"
     "|__|__|_|_  |___| |_| |_| |__,|___|___|_|  \n"
-    "        |___|                              \n"                 
+    "        |___|                                "                 
     )
+    print("_" * 42
+          + "\nWelcome to AlgoTrader! AlgoTrader uses a"
+          "\nsimulated market created from made-up data"
+          "\nto test the performance of the trading bot.")
+    time.sleep(3)
+    print("Lets begin!")
+    time.sleep(3)
 
-    stocks: list[Stock] = generate_random_stocks(10)
-    print(stocks)
+    num_stocks: int = int(input("Enter the number of stocks you would like"
+                                 "\nto have in the market: "))
+    num_days: int = int(input("Enter the number of days you would like to"
+                              "\nrun the simulation: "))
+
+    stocks: list[Stock] = generate_random_stocks(num_stocks)
+    market: Market = Market(stocks)
+
+    for i in range(num_days):
+        market.update_prices(5)
+        print(stocks)
 
 if __name__ == "__main__":
     main()
