@@ -4,33 +4,32 @@ import random
 import time
 
 class Market:
-    __slots__ = ["stocks", "status", "time"]
+    __slots__ = ["stocks", "time"]
 
     def __init__(self, stocks: dict[Stock, float]): # Stock : performance
         self.stocks = stocks
-        self.status = True # True = open; False = closed
         self.time = 9   # 9 instead of 9:30 for convenience
     
-    def update_prices(self, other_price) -> None:
+    def update_prices(self) -> None:
         for stock in self.stocks:
-            stock.update_prices(other_price)
+            price_change: float = random.uniform(-0.10, 0.10)
+            stock.update_prices(stock.get_current_price() * (1 + price_change))
 
     def update_time(self) -> None:
-        if time == 16:
-            self.status = False
+        if self.time == 16:
+            for stock in self.stocks:
+                stock.set_open_price(stock.get_current_price())
+
+            self.time = 9
         else:
-            time += 1
+            self.time += 1
 
     def get_stocks(self) -> dict[Stock, float]:
         return self.stocks
     
-    def set_status_open(self) -> None:
-        self.time = 9
-        self.status = True
+    def get_time(self) -> int:
+        return self.time
     
-    def is_open(self) -> bool:
-        return self.status == True
-
 def generate_random_stocks(num_stocks: int) -> dict[Stock, float]:
     stocks: dict[Stock,float] = dict()
 
@@ -49,10 +48,16 @@ def generate_random_stocks(num_stocks: int) -> dict[Stock, float]:
 
     return stocks
 
-def simulate_market(market: Market, num_days: int):
+def simulate_market(market: Market, num_days: int) -> None:
     for i in range(num_days):
-        market.update_prices(5)
-        print(market.get_stocks())
+        print("\nMarket is now open!")
+
+        for j in range(8):
+            print(str(market.get_time()) + ":00 - " + str(market.get_stocks()))
+            market.update_time()
+            market.update_prices()
+
+        print("Market is now closed...")
 
 def main():
     print(           
@@ -66,9 +71,9 @@ def main():
           + "\nWelcome to AlgoTrader! AlgoTrader uses a"
           "\nsimulated market created from made-up data"
           "\nto test the performance of the trading bot.")
-    time.sleep(3)
+    time.sleep(2)
     print("Lets begin!")
-    time.sleep(3)
+    time.sleep(2)
 
     num_stocks: int = int(input("Enter the number of stocks you would like"
                                  "\nto have in the market: "))
