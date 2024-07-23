@@ -12,7 +12,7 @@ class Market:
     
     def update_prices(self) -> None:
         for stock in self.stocks:
-            price_change: float = random.uniform(-0.10, 0.10)
+            price_change: float = random.uniform(-0.05, 0.05)
             stock.update_prices(stock.get_current_price() * (1 + price_change))
 
     def update_time(self) -> None:
@@ -49,15 +49,18 @@ def generate_random_stocks(num_stocks: int) -> dict[Stock, float]:
     return stocks
 
 def simulate_market(market: Market, num_days: int) -> None:
-    for i in range(num_days):
+    for _ in range(num_days):
         print("\nMarket is now open!")
 
-        for j in range(8):
-            print(str(market.get_time()) + ":00 - " + str(market.get_stocks()))
+        for hour in range(8):
+            print(str(market.get_time()) + ":00 - " + str(list(market.get_stocks().keys())))
             market.update_time()
-            market.update_prices()
+
+            if hour < 7:
+                market.update_prices()
 
         print("Market is now closed...")
+
 
 def main():
     print(           
