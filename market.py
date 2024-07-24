@@ -95,6 +95,7 @@ def generate_random_stocks(num_stocks: int) -> dict[Stock, list[float, float]]:
 def simulate_market(market: Market, num_days: int) -> None:
     for day in range(num_days):
         chance: int = random.randint(1, 100)
+
         if chance == 1:
             print("\nMarket is crashing!!!")
             market.crash()
@@ -109,7 +110,6 @@ def simulate_market(market: Market, num_days: int) -> None:
                 if hour < 7:
                     market.update_prices()
 
-            market.reset_daily_performances()
             print("Market is now closed...")
         else:
             for hour in range(8):
@@ -118,7 +118,7 @@ def simulate_market(market: Market, num_days: int) -> None:
                 if hour < 7:
                     market.update_prices()
 
-            market.reset_daily_performances()
+        market.reset_daily_performances()
 
 def main():
     print(           
