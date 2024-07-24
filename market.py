@@ -6,33 +6,39 @@ import time
 class Market:
     __slots__ = ["stocks", "time"]
 
-    def __init__(self, stocks: dict[Stock, float]): # Stock : performance
+    def __init__(self, stocks: dict[Stock, list[float, float]]): # Stock : [daily_performance, overall_performance]
         self.stocks = stocks
         self.time = 9   # 9 instead of 9:30 for convenience
     
     def update_prices(self) -> None:
         for stock in self.stocks:
-            performance: float = self.stocks[stock]
+            daily_performance: float = self.stocks[stock][0]
+            overall_performance: float = self.stocks[stock][1]
             price_change: float = 0.0
             chance: int = random.randint(1, 3)
+            is_volatile: bool = self.time < 11
 
-            # when market opens, price changes are more volatile
-            # add daily performance and overall performance
-            # if overall bad but daily good, price change good but not as good as stock with overall good performance
-            if (performance >= 0.75 and chance > 1) or (performance <= 0.25 and chance < 2):
-                price_change = random.uniform(-0.01, 0.02)
-            elif (performance >= 0.75 and chance < 2) or (performance <= 0.25 and chance > 1):
-                price_change = random.uniform(-0.02, 0.01)
+            if is_volatile and ((overall_performance >= 0.5 and chance > 1) or overall_performance < 0.5 and chance < 2):
+                price_change = random.uniform(-0.025, 0.05)
+            elif is_volatile and ((overall_performance >= 0.5 and chance < 2) or overall_performance < 0.5 and chance > 1):
+                price_change = random.uniform(-0.05, 0.025)
+            elif is_volatile:
+                price_change = random.uniform(-0.05, 0.05)
+            elif (daily_performance >= 0.5 and chance > 1) or (daily_performance < 0.5 and chance < 2):
+                price_change = random.uniform(-0.0075, 0.015)
+            elif (daily_performance >= 0.5 and chance < 2) or (daily_performance < 0.5 and chance > 1):
+                price_change = random.uniform(-0.015, 0.0075)
             else:
-                price_change = random.uniform(-0.02, 0.02)
+                price_change = random.uniform(-0.015, 0.015)
 
             stock.update_prices(stock.get_current_price() * (1 + price_change))
-            self.stocks[stock] *= (1 + price_change)
+            self.stocks[stock][0] *= (1 + price_change)
+            self.stocks[stock][1] *= (1 + price_change)
 
-            if self.stocks[stock] > 1.0:
-                self.stocks[stock] = 1.0
-            elif self.stocks[stock] < 0.0:
-                self.stocks[stock] = 0.0
+            if self.stocks[stock][1] > 1.0:
+                self.stocks[stock][1] = 1.0
+            elif self.stocks[stock][1] < 0.0:
+                self.stocks[stock][1] = 0.0
 
     def update_time(self) -> None:
         if self.time == 16:
@@ -43,12 +49,17 @@ class Market:
         else:
             self.time += 1
 
+    def reset_daily_performances(self) -> None:
+        for stock in self.stocks:
+            self.stocks[stock][0] = 0.5
+
     def crash(self) -> None:
         for stock in self.stocks:
             change: float = random.uniform(0.5, 0.9)
             stock.update_prices(stock.get_current_price() * change)
             stock.set_open_price(stock.get_current_price())
-            self.stocks[stock] = (self.stocks[stock] * change)
+            self.stocks[stock][0] = (self.stocks[stock][0] * change)
+            self.stocks[stock][1] = (self.stocks[stock][1] * change)
 
     def get_stocks(self) -> dict[Stock, float]:
         return self.stocks
@@ -56,8 +67,8 @@ class Market:
     def get_time(self) -> int:
         return self.time
     
-def generate_random_stocks(num_stocks: int) -> dict[Stock, float]:
-    stocks: dict[Stock,float] = dict()
+def generate_random_stocks(num_stocks: int) -> dict[Stock, list[float, float]]:
+    stocks: dict[Stock, list[float, float]] = dict()
 
     while len(stocks.keys()) < num_stocks:
         name: str = ""
@@ -70,7 +81,7 @@ def generate_random_stocks(num_stocks: int) -> dict[Stock, float]:
             continue
         else:
             stock: Stock = Stock(name, random.uniform(1.0, 100.0))
-            stocks[stock] = 0.5
+            stocks[stock] = [0.5, 0.5]
 
     return stocks
 
@@ -90,6 +101,7 @@ def simulate_market(market: Market, num_days: int) -> None:
             if hour < 7:
                 market.update_prices()
 
+        market.reset_daily_performances()
         print("Market is now closed...")
 
 
@@ -114,7 +126,7 @@ def main():
     num_days: int = int(input("Enter the number of days you would like to"
                               "\nrun the simulation: "))
 
-    stocks: list[Stock] = generate_random_stocks(num_stocks)
+    stocks: dict[Stock, list[float, float]] = generate_random_stocks(num_stocks)
     market: Market = Market(stocks)
 
     simulate_market(market, num_days)
