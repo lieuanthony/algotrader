@@ -1,20 +1,21 @@
 from stock import *
 from portfolio import *
+from trader import *
 import random
 import time
 
 class Market:
-    __slots__ = ["stocks", "time", "hourly_prices_enabled"]
+    __slots__ = ["market_stocks", "time", "hourly_prices_enabled"]
 
-    def __init__(self, stocks: dict[Stock, list[float, float]]): # Stock : [daily_performance, overall_performance]
-        self.stocks = stocks
+    def __init__(self, market_stocks: dict[Stock, list[float, float]]): # Stock : [daily_performance, overall_performance]
+        self.market_stocks = market_stocks
         self.time = 9   # 9 instead of 9:30 for convenience
         self.hourly_prices_enabled = False
     
     def update_prices(self) -> None:
-        for stock in self.stocks:
-            daily_performance: float = self.stocks[stock][0]
-            overall_performance: float = self.stocks[stock][1]
+        for stock in self.market_stocks:
+            daily_performance: float = self.market_stocks[stock][0]
+            overall_performance: float = self.market_stocks[stock][1]
             price_change: float = 0.0
             chance: int = random.randint(1, 3)
             is_volatile: bool = self.time < 11
@@ -33,17 +34,17 @@ class Market:
                 price_change = random.uniform(-0.015, 0.015)
 
             stock.update_prices(stock.get_current_price() * (1 + price_change))
-            self.stocks[stock][0] *= (1 + price_change)
-            self.stocks[stock][1] *= (1 + price_change)
+            self.market_stocks[stock][0] *= (1 + price_change)
+            self.market_stocks[stock][1] *= (1 + price_change)
 
-            if self.stocks[stock][1] > 1.0:
-                self.stocks[stock][1] = 1.0
-            elif self.stocks[stock][1] < 0.0:
-                self.stocks[stock][1] = 0.0
+            if self.market_stocks[stock][1] > 1.0:
+                self.market_stocks[stock][1] = 1.0
+            elif self.market_stocks[stock][1] < 0.0:
+                self.market_stocks[stock][1] = 0.0
 
     def update_time(self) -> None:
         if self.time == 16:
-            for stock in self.stocks:
+            for stock in self.market_stocks:
                 stock.set_open_price(stock.get_current_price())
 
             self.time = 9
@@ -51,19 +52,19 @@ class Market:
             self.time += 1
 
     def reset_daily_performances(self) -> None:
-        for stock in self.stocks:
-            self.stocks[stock][0] = 0.5
+        for stock in self.market_stocks:
+            self.market_stocks[stock][0] = 0.5
 
     def crash(self) -> None:
-        for stock in self.stocks:
+        for stock in self.market_stocks:
             change: float = random.uniform(0.5, 0.9)
             stock.update_prices(stock.get_current_price() * change)
             stock.set_open_price(stock.get_current_price())
-            self.stocks[stock][0] = (self.stocks[stock][0] * change)
-            self.stocks[stock][1] = (self.stocks[stock][1] * change)
+            self.market_stocks[stock][0] = (self.market_stocks[stock][0] * change)
+            self.market_stocks[stock][1] = (self.market_stocks[stock][1] * change)
 
-    def get_stocks(self) -> dict[Stock, float]:
-        return self.stocks
+    def get_market_stocks(self) -> dict[Stock, float]:
+        return self.market_stocks
     
     def get_time(self) -> int:
         return self.time
@@ -74,25 +75,25 @@ class Market:
     def is_hourly_prices_enabled(self) -> bool:
         return self.hourly_prices_enabled
     
-def generate_random_stocks(num_stocks: int) -> dict[Stock, list[float, float]]:
-    stocks: dict[Stock, list[float, float]] = dict()
+def generate_random_market_stocks(num_market_stocks: int) -> dict[Stock, list[float, float]]:
+    market_stocks: dict[Stock, list[float, float]] = dict()
 
-    while len(stocks.keys()) < num_stocks:
+    while len(market_stocks.keys()) < num_market_stocks:
         name: str = ""
         num_letters: int = random.randint(2, 4)
         
         for _ in range(num_letters):
             name += chr(random.randint(ord('A'), ord('Z')))
 
-        if name in stocks.keys():
+        if name in market_stocks.keys():
             continue
         else:
             stock: Stock = Stock(name, random.uniform(1.0, 100.0))
-            stocks[stock] = [0.5, 0.5]
+            market_stocks[stock] = [0.5, 0.5]
 
-    return stocks
+    return market_stocks
 
-def simulate_market(market: Market, num_days: int) -> None:
+def simulate_market(market: Market, num_days: int, trader: Trader) -> None:
     for day in range(num_days):
         chance: int = random.randint(1, 100)
 
@@ -103,20 +104,17 @@ def simulate_market(market: Market, num_days: int) -> None:
         if market.is_hourly_prices_enabled():
             print("\nDay " + str(day + 1) + " - Market is now open!")
 
-            for hour in range(8):
-                print(str(market.get_time()) + ":00 - " + str(list(market.get_stocks().keys())))
-                market.update_time()
+        for hour in range(8):
+            if market.is_hourly_prices_enabled():
+                print(str(market.get_time()) + ":00 - " + str(list(market.get_market_stocks().keys())))
 
-                if hour < 7:
+            market.update_time()
+
+            if hour < 7:
                     market.update_prices()
 
+        if market.is_hourly_prices_enabled():
             print("Market is now closed...")
-        else:
-            for hour in range(8):
-                market.update_time()
-
-                if hour < 7:
-                    market.update_prices()
 
         market.reset_daily_performances()
 
@@ -136,21 +134,24 @@ def main():
     print("Lets begin!")
     time.sleep(2)
 
-    num_stocks: int = int(input("Enter the number of stocks you would like"
+    num_market_stocks: int = int(input("Enter the number of stocks you would like"
                                  "\nto have in the market: "))
     num_days: int = int(input("Enter the number of days you would like to"
                               "\nrun the simulation: "))
     principal: float = float(input("Enter the amount of money you would like"
-                                   "the trading bot to start with (float): "))
+                                   "\nthe trading bot to start with: "))
     response: str = input("Would you like to enable hourly prices (y or n): ")
 
-    stocks: dict[Stock, list[float, float]] = generate_random_stocks(num_stocks)
-    market: Market = Market(stocks)
+    market_stocks: dict[Stock, list[float, float]] = generate_random_market_stocks(num_market_stocks)
+    market: Market = Market(market_stocks)
+
+    portfolio: Portfolio = Portfolio(principal)
+    trader: Trader = Trader(portfolio)
 
     if response.lower() == "y":
         market.enable_hourly_prices()
 
-    simulate_market(market, num_days)
+    simulate_market(market, num_days, trader)
 
 if __name__ == "__main__":
     main()
