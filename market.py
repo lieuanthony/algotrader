@@ -4,11 +4,12 @@ import random
 import time
 
 class Market:
-    __slots__ = ["stocks", "time"]
+    __slots__ = ["stocks", "time", "hourly_prices_enabled"]
 
     def __init__(self, stocks: dict[Stock, list[float, float]]): # Stock : [daily_performance, overall_performance]
         self.stocks = stocks
         self.time = 9   # 9 instead of 9:30 for convenience
+        self.hourly_prices_enabled = False
     
     def update_prices(self) -> None:
         for stock in self.stocks:
@@ -67,6 +68,12 @@ class Market:
     def get_time(self) -> int:
         return self.time
     
+    def enable_hourly_prices(self) -> None:
+        self.hourly_prices_enabled = True
+
+    def is_hourly_prices_enabled(self) -> bool:
+        return self.hourly_prices_enabled
+    
 def generate_random_stocks(num_stocks: int) -> dict[Stock, list[float, float]]:
     stocks: dict[Stock, list[float, float]] = dict()
 
@@ -92,18 +99,26 @@ def simulate_market(market: Market, num_days: int) -> None:
             print("\nMarket is crashing!!!")
             market.crash()
 
-        print("\nDay " + str(day + 1) + " - Market is now open!")
+        if market.is_hourly_prices_enabled():
+            print("\nDay " + str(day + 1) + " - Market is now open!")
 
-        for hour in range(8):
-            print(str(market.get_time()) + ":00 - " + str(market.get_stocks()))
-            market.update_time()
+            for hour in range(8):
+                print(str(market.get_time()) + ":00 - " + str(list(market.get_stocks().keys())))
+                market.update_time()
 
-            if hour < 7:
-                market.update_prices()
+                if hour < 7:
+                    market.update_prices()
 
-        market.reset_daily_performances()
-        print("Market is now closed...")
+            market.reset_daily_performances()
+            print("Market is now closed...")
+        else:
+            for hour in range(8):
+                market.update_time()
 
+                if hour < 7:
+                    market.update_prices()
+
+            market.reset_daily_performances()
 
 def main():
     print(           
@@ -125,9 +140,13 @@ def main():
                                  "\nto have in the market: "))
     num_days: int = int(input("Enter the number of days you would like to"
                               "\nrun the simulation: "))
+    response: str = input("Would you like to enable hourly prices (y or n): ")
 
     stocks: dict[Stock, list[float, float]] = generate_random_stocks(num_stocks)
     market: Market = Market(stocks)
+
+    if response.lower() == "y":
+        market.enable_hourly_prices()
 
     simulate_market(market, num_days)
 
