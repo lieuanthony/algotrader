@@ -140,6 +140,8 @@ def main():
                                  "\nto have in the market: "))
     num_days: int = int(input("Enter the number of days you would like to"
                               "\nrun the simulation: "))
+    principal: float = float(input("Enter the amount of money you would like"
+                                   "the trading bot to start with (float): "))
     response: str = input("Would you like to enable hourly prices (y or n): ")
 
     stocks: dict[Stock, list[float, float]] = generate_random_stocks(num_stocks)
