@@ -63,8 +63,16 @@ class Market:
             self.market_stocks[stock][0] = (self.market_stocks[stock][0] * change)
             self.market_stocks[stock][1] = (self.market_stocks[stock][1] * change)
 
-    def get_market_stocks(self) -> dict[Stock, float]:
+    def get_market_stocks_with_performance(self) -> dict[Stock, list[float, float]]:
         return self.market_stocks
+    
+    def get_market_stocks(self) -> list[Stock]:
+        stocks: list[Stock] = []
+        
+        for stock in self.market_stocks:
+            stocks.append(stock)
+
+        return stocks
     
     def get_time(self) -> int:
         return self.time

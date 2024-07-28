@@ -50,7 +50,7 @@ class Portfolio:
 
         self.returns = returns
 
-    def get_stocks(self) -> dict[Stock, (float, int)]: # type: ignore
+    def get_portfolio_stocks(self) -> dict[Stock, (float, int)]: # type: ignore
         return self.portfolio_stocks
     
     def get_total_value(self) -> float:
