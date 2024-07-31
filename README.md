@@ -28,6 +28,7 @@ This command starts the stock market simulation and initializes the trading bot.
 **2. Interacting with the Trading Bot:**
   - The trading bot automatically makes buy and sell decisions based on simulated market conditions.
   - Adjust the trading algorithm in trader.py to modify trading strategies.
+
 **3. Analyzing Results:**
   - Review console output for simulated market trends and trading bot decisions.
   - Modify simulation parameters in market.py to adjust market behavior.
