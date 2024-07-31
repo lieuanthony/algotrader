@@ -126,7 +126,7 @@ def simulate_market(market: Market, num_days: int, trader) -> None:
         print("Portfolio: " + str(owned_stocks))
         print("Available Funds: $" + str(round(trader.get_trader_portfolio().get_cash(), 2)))
         print("Total Value: $" + str(round(trader.get_trader_portfolio().get_total_value(), 2)))
-        print("Total Returns: $" + str(round(trader.get_trader_portfolio().get_returns(), 2)))
+        print("Total Returns: $" + str(round(trader.get_trader_portfolio().get_returns(), 2)) + " (" + str(round((trader.get_trader_portfolio().get_returns()/trader.get_trader_portfolio().get_principal() * 100), 2)) + "%)")
 
 def main():
     print(           

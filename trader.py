@@ -46,7 +46,7 @@ class Trader:
                 can_sell = True;
                 max_num_sell_shares: int = portfolio_stocks[stock.get_name()][2]
 
-            if (current_price >= open_price * 1.075 or current_price == high_price) and can_sell:
+            if (current_price >= open_price * 1.05 or current_price == high_price) and can_sell:
                 num_shares = portfolio_stocks[stock.get_name()][2]
                 self.portfolio.sell_shares(stock, num_shares)
                 sold_stocks[stock] = num_shares

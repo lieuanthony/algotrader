@@ -56,3 +56,6 @@ class Portfolio:
     
     def get_returns(self) -> float:
         return self.returns
+    
+    def get_principal(self) -> float:
+        return self.principal
