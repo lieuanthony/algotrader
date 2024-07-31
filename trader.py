@@ -9,7 +9,7 @@ class Trader:
     def __init__(self, portfolio: Portfolio, market: Market): # type: ignore
         self.portfolio = portfolio
         self.market = market
-        self.stop_loss = 0.95
+        self.stop_loss = 0.96
 
     def trade(self) -> list[int, dict[Stock, int], dict[Stock, int]]:
         portfolio_stocks: dict[str, list[Stock, float, int]] = self.portfolio.get_portfolio_stocks()
@@ -46,7 +46,7 @@ class Trader:
                 can_sell = True;
                 max_num_sell_shares: int = portfolio_stocks[stock.get_name()][2]
 
-            if (current_price >= open_price * 1.05 or current_price == high_price) and can_sell:
+            if (current_price >= open_price * 1.04 or current_price == high_price) and can_sell:
                 num_shares = portfolio_stocks[stock.get_name()][2]
                 self.portfolio.sell_shares(stock, num_shares)
                 sold_stocks[stock] = num_shares
