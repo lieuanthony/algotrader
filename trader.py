@@ -33,7 +33,6 @@ class Trader:
             high_price: float = stock.get_high_price()
             low_price: float = stock.get_low_price()
 
-            num_shares: int = 0
             executed_trade: list[int, dict[Stock, int], dict[Stock, int]] = [0, bought_stocks, sold_stocks]
 
             if current_price > open_price:
@@ -44,8 +43,6 @@ class Trader:
                         num_shares = random.randint(1, max_num_shares + 1)
                     elif current_price == high_price:
                         num_shares = max_num_shares
-                    else:
-                        num_shares = random.randint(1, 3)
 
                     if current_price * num_shares <= self.portfolio.get_cash():
                         self.portfolio.buy_shares(stock, num_shares)
@@ -60,14 +57,13 @@ class Trader:
                         num_shares = random.randint(1, max_num_shares + 1)
                     elif current_price == low_price:
                         num_shares = max_num_shares
-                    else:
-                        num_shares = random.randint(1, 3)
 
                     if stock.get_name() in self.portfolio.get_portfolio_stocks() or num_shares > self.portfolio.get_portfolio_stocks()[stock.get_name()][2]:
                         self.portfolio.sell_shares(stock, num_shares)
                         sold_stocks[stock] = num_shares
                         executed_trade[0] = 1
-            
+
+        self.portfolio.update_total_value() 
         self.portfolio.update_returns()
         return executed_trade
 

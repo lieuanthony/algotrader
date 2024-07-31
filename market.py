@@ -122,6 +122,7 @@ def simulate_market(market: Market, num_days: int, trader) -> None:
         market.reset_daily_performances()
 
         print(trader.get_trader_portfolio().get_portfolio_stocks())
+        print(trader.get_trader_portfolio().get_cash())
         print(trader.get_trader_portfolio().get_returns())
 
 def main():

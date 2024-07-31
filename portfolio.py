@@ -30,25 +30,24 @@ class Portfolio:
 
         current_price: float = self.portfolio_stocks[stock][0].get_current_price()
         self.cash += current_price * num_shares
-        self.total_value -= current_price * num_shares
+        self.total_value = current_price * num_shares
         self.portfolio_stocks[stock][2] -= num_shares
 
     def update_returns(self) -> None:
-        returns: float = 0.0
-
-        for stock in self.portfolio_stocks:
-            current_price: float = self.portfolio_stocks[stock][0].get_current_price()
-            num_shares: int = self.portfolio_stocks[stock][2]
-            if current_price > self.portfolio_stocks[stock][1]:
-                returns += current_price * num_shares
-            else:
-                returns -= current_price * num_shares
-
-        self.returns = returns
+        self.returns = self.total_value - self.principal
 
     def get_portfolio_stocks(self) -> dict[str, list[Stock, float, int]]: # type: ignore
         return self.portfolio_stocks
     
+    def update_total_value(self) -> None:
+        total: int = 0.0
+
+        for stock in self.portfolio_stocks:
+            total += self.portfolio_stocks[stock][0].get_current_price() * self.portfolio_stocks[stock][2]
+
+        total += self.cash
+        self.total_value = total
+
     def get_total_value(self) -> float:
         return self.total_value
     
