@@ -107,8 +107,14 @@ def simulate_market(market: Market, num_days: int, trader) -> None:
         for _ in range(7):
             executed_trade: tuple[int, int, list[Stock]] = trader.trade() # tuple[action, num_shares, stock]
 
-            market.update_time()
+            if executed_trade[0] == 1:
+                for stock in executed_trade[1]:
+                    print(str(market.get_time()) + ":00 - Trader bought " + str(executed_trade[1][stock]) + " " + str(stock))
+                for stock in executed_trade[2]:
+                    print(str(market.get_time()) + ":00 - Trader sold " + str(executed_trade[2][stock]) + " " + str(stock))
+
             market.update_prices()
+            market.update_time()
 
         market.reset_daily_performances()
         market.reset_time()
