@@ -4,7 +4,7 @@ class Portfolio:
     __slots__ = ["portfolio_stocks", "principal", "total_value", "cash", "returns"]
 
     def __init__(self, principal: float):
-        self.portfolio_stocks = dict() # stock_name : (Stock, price bought at, num_shares)
+        self.portfolio_stocks = dict() # dict[stock_name, tuple[Stock, price bought at, num_shares]]
         self.principal = principal
         self.total_value = 0.0
         self.cash = principal

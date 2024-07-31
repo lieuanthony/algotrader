@@ -7,7 +7,7 @@ import time
 class Market:
     __slots__ = ["market_stocks", "time"]
 
-    def __init__(self, market_stocks: dict[Stock, list[float, float]]): # Stock : [daily_performance, overall_performance]
+    def __init__(self, market_stocks: dict[Stock, list[float, float]]): # dict[Stock, list[daily_performance, overall_performance]]
         self.market_stocks = market_stocks
         self.time = 9   # 9 instead of 9:30 for convenience
     
@@ -100,24 +100,15 @@ def simulate_market(market: Market, num_days: int, trader) -> None:
             market.crash()
 
         print("\nDay " + str(day + 1))
-        # print("\nDay " + str(day + 1) + " - Market is now open!")
 
         for stock in market.get_market_stocks():
             stock.set_open_price(stock.get_current_price())
 
         for _ in range(7):
-            executed_trade: tuple[int, int, list[Stock]] = trader.trade() # tuple[bought or sold, num_shares, stock]
-
-            # if executed_trade[0] == 1:
-            #     for stock in executed_trade[1]:
-            #         print(str(market.get_time()) + ":00 - Trader bought " + str(int(executed_trade[1][stock])) + " " + str(stock))
-            #     for stock in executed_trade[2]:
-            #         print(str(market.get_time()) + ":00 - Trader sold " + str(int(executed_trade[2][stock])) + " " + str(stock))
+            executed_trade: tuple[int, int, list[Stock]] = trader.trade() # tuple[action, num_shares, stock]
 
             market.update_time()
             market.update_prices()
-
-        # print("Market is now closed...")
 
         market.reset_daily_performances()
         market.reset_time()
