@@ -2,7 +2,6 @@ from stock import *
 from portfolio import *
 from trader import *
 import random
-import time
 
 class Market:
     __slots__ = ["market_stocks", "time"]
