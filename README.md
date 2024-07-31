@@ -38,6 +38,6 @@ Contributions are welcome! Feel free to submit pull requests or report issues in
 ## License
 This project is licensed under the [MIT License](https://raw.githubusercontent.com/lieuanthony/AlgoTrader/main/LICENSE).
 
-##Acknowledgements
+## Acknowledgements
 - Inspired by the complexities of real-world financial markets.
 - Built as a learning project for simulating market dynamics and algorithmic trading.
