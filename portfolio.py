@@ -16,25 +16,22 @@ class Portfolio:
         if self.cash < current_price * num_shares:
             return
 
-        self.cash -= current_price
+        self.cash -= current_price * num_shares
         self.total_value += current_price * num_shares
 
-        if stock.get_name() in self.portfolio_stocks.keys():
-            self.portfolio_stocks[stock.get_name()][2] += num_shares
+        if stock in self.portfolio_stocks:
+            self.portfolio_stocks[stock][2] += num_shares
         else:
-            self.portfolio_stocks[stock.get_name()] = [stock, current_price, num_shares]
+            self.portfolio_stocks[stock] = [stock, current_price, num_shares]
 
     def sell_shares(self, stock: Stock, num_shares: int) -> None:
         if stock not in self.portfolio_stocks or self.portfolio_stocks[stock][2] < num_shares:
             return
 
-        current_price: float = stock.get_current_price()
+        current_price: float = self.portfolio_stocks[stock][0].get_current_price()
         self.cash += current_price * num_shares
         self.total_value -= current_price * num_shares
-        self.portfolio_stocks[stock.get_name()][2] -= num_shares
-
-        if self.portfolio_stocks[stock.get_name()][2] == 0:
-            self.portfolio_stocks.pop(stock.get_name())
+        self.portfolio_stocks[stock][2] -= num_shares
 
     def update_returns(self) -> None:
         returns: float = 0.0
@@ -49,7 +46,7 @@ class Portfolio:
 
         self.returns = returns
 
-    def get_portfolio_stocks(self) -> dict[Stock, list[Stock, float, int]]: # type: ignore
+    def get_portfolio_stocks(self) -> dict[str, list[Stock, float, int]]: # type: ignore
         return self.portfolio_stocks
     
     def get_total_value(self) -> float:
