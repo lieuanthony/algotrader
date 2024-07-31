@@ -101,7 +101,7 @@ def generate_random_market_stocks(num_market_stocks: int) -> dict[Stock, list[fl
 
     return market_stocks
 
-def simulate_market(market: Market, num_days: int, trader: Trader) -> None:
+def simulate_market(market: Market, num_days: int, trader) -> None:
     for day in range(num_days):
         chance: int = random.randint(1, 100)
 
@@ -109,22 +109,29 @@ def simulate_market(market: Market, num_days: int, trader: Trader) -> None:
             print("\nMarket is crashing!!!")
             market.crash()
 
-        if market.is_hourly_prices_enabled():
-            print("\nDay " + str(day + 1) + " - Market is now open!")
+        print("\nDay " + str(day + 1) + " - Market is now open!")
 
         for hour in range(8):
             if market.is_hourly_prices_enabled():
                 print(str(market.get_time()) + ":00 - " + str(list(market.get_market_stocks().keys())))
 
             market.update_time()
+            executed_trade: tuple[int, int, list[Stock]] = trader.trade() # tuple[bought or sold, num_shares, stock]
+
+            if executed_trade[0] == 1:
+                for stock in executed_trade[1]:
+                    print("Trader bought " + str(executed_trade[1][stock]) + " " + str(stock))
+                for stock in executed_trade[2]:
+                    print("Trader sold " + str(executed_trade[2][stock]) + " " + str(stock))
 
             if hour < 7:
-                    market.update_prices()
+                market.update_prices()
 
-        if market.is_hourly_prices_enabled():
-            print("Market is now closed...")
+        print("Market is now closed...")
 
         market.reset_daily_performances()
+
+        print(trader.get_trader_portfolio().get_portfolio_stocks())
 
 def main():
     print(           
@@ -134,13 +141,7 @@ def main():
     "|__|__|_|_  |___| |_| |_| |__,|___|___|_|  \n"
     "        |___|                                "                 
     )
-    print("_" * 42
-          + "\nWelcome to AlgoTrader! AlgoTrader uses a"
-          "\nsimulated market created from made-up data"
-          "\nto test the performance of the trading bot.")
-    time.sleep(2)
-    print("Lets begin!")
-    time.sleep(2)
+    print("_" * 42)
 
     num_market_stocks: int = int(input("Enter the number of stocks you would like"
                                  "\nto have in the market: "))
@@ -154,7 +155,7 @@ def main():
     market: Market = Market(market_stocks)
 
     portfolio: Portfolio = Portfolio(principal)
-    trader: Trader = Trader(portfolio)
+    trader: Trader = Trader(portfolio, market)
 
     if response.lower() == "y":
         market.enable_hourly_prices()
