@@ -25,7 +25,7 @@ class Trader:
             num_shares: int = portfolio_stocks[stock][2]
             stop_loss_price: float = price_bought_at * self.stop_loss
 
-            if stop_loss_price <= price_bought_at and num_shares > 0:
+            if (stop_loss_price <= price_bought_at or self.portfolio.get_portfolio_stocks()[0].get_current_price() == self.portfolio.get_portfolio_stocks()[0].get_high_price() ) and num_shares > 0:
                 self.portfolio.sell_shares(stock, num_shares)
                 sold_stocks[stock] = num_shares
                 executed_trade[0] = 1
