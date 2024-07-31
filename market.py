@@ -99,7 +99,8 @@ def simulate_market(market: Market, num_days: int, trader) -> None:
             print("\nMarket is crashing!!!")
             market.crash()
 
-        print("\nDay " + str(day + 1) + " - Market is now open!")
+        print("\nDay " + str(day + 1))
+        # print("\nDay " + str(day + 1) + " - Market is now open!")
 
         for stock in market.get_market_stocks():
             stock.set_open_price(stock.get_current_price())
@@ -107,16 +108,16 @@ def simulate_market(market: Market, num_days: int, trader) -> None:
         for _ in range(7):
             executed_trade: tuple[int, int, list[Stock]] = trader.trade() # tuple[bought or sold, num_shares, stock]
 
-            if executed_trade[0] == 1:
-                for stock in executed_trade[1]:
-                    print(str(market.get_time()) + ":00 - " + "Trader bought " + str(int(executed_trade[1][stock])) + " " + str(stock))
-                for stock in executed_trade[2]:
-                    print(str(market.get_time()) + ":00 - " + "Trader sold " + str(int(executed_trade[2][stock])) + " " + str(stock))
+            # if executed_trade[0] == 1:
+            #     for stock in executed_trade[1]:
+            #         print(str(market.get_time()) + ":00 - Trader bought " + str(int(executed_trade[1][stock])) + " " + str(stock))
+            #     for stock in executed_trade[2]:
+            #         print(str(market.get_time()) + ":00 - Trader sold " + str(int(executed_trade[2][stock])) + " " + str(stock))
 
             market.update_time()
             market.update_prices()
 
-        print("Market is now closed...")
+        # print("Market is now closed...")
 
         market.reset_daily_performances()
         market.reset_time()

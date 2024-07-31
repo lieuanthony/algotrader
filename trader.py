@@ -9,7 +9,7 @@ class Trader:
     def __init__(self, portfolio: Portfolio, market: Market): # type: ignore
         self.portfolio = portfolio
         self.market = market
-        self.stop_loss = 0.9
+        self.stop_loss = 0.95
 
     def trade(self) -> list[int, dict[Stock, int], dict[Stock, int]]:
         portfolio_stocks: dict[str, list[Stock, float, int]] = self.portfolio.get_portfolio_stocks()
@@ -25,7 +25,6 @@ class Trader:
 
             if stop_loss_price <= price_bought_at:
                 self.portfolio.sell_shares(stock, num_shares)
-                sold_stocks[stock] = num_shares
 
         for stock in market_stocks:
             open_price: float = stock.get_open_price()
@@ -46,22 +45,17 @@ class Trader:
                 can_sell = True;
                 max_num_sell_shares: int = portfolio_stocks[stock.get_name()][2]
 
-            if (current_price > open_price * 1.05 or current_price == high_price) and can_sell:
+            if (current_price > open_price * 1.075 or current_price == high_price) and can_sell:
                 num_shares = portfolio_stocks[stock.get_name()][2]
                 self.portfolio.sell_shares(stock, num_shares)
                 sold_stocks[stock] = num_shares
                 executed_trade[0] = 1
-            elif current_price > open_price * 1.025 and can_buy:
+            elif current_price > open_price * 1.02 and can_buy:
                 num_shares = random.randint(1, max_num_buy_shares)
                 self.portfolio.buy_shares(stock, num_shares)
                 bought_stocks[stock] = num_shares
                 executed_trade[0] = 1
-            elif (current_price < open_price * 0.95 or current_price == low_price) and can_buy:
-                num_shares = random.randint(1, max_num_buy_shares)
-                self.portfolio.buy_shares(stock, num_shares)
-                bought_stocks[stock] = num_shares
-                executed_trade[0] = 1
-            elif current_price < open_price * 1.025 and can_sell:
+            elif current_price < open_price * 1.02 and can_sell:
                 num_shares = random.randint(1, max_num_sell_shares)
                 self.portfolio.sell_shares(1, max_num_sell_shares)
                 sold_stocks[stock] = num_shares
