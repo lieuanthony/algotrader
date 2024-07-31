@@ -52,13 +52,19 @@ class Trader:
                 sold_stocks[stock] = num_shares
                 executed_trade[0] = 1
             elif current_price >= open_price * 1.02 and can_buy:
-                num_shares = random.randint(1, max_num_buy_shares)
+                if max_num_buy_shares == 1:
+                    num_shares = 1
+                else:
+                    num_shares = random.randint(1, max_num_buy_shares)
                 self.portfolio.buy_shares(stock, num_shares)
                 bought_stocks[stock] = num_shares
                 executed_trade[0] = 1
             elif current_price <= open_price * 0.98 and can_sell:
-                num_shares = random.randint(1, max_num_sell_shares)
-                self.portfolio.sell_shares(1, max_num_sell_shares)
+                if max_num_sell_shares == 1:
+                    num_shares = 1
+                else:
+                    num_shares = random.randint(1, max_num_sell_shares)
+                self.portfolio.sell_shares(stock, num_shares)
                 sold_stocks[stock] = num_shares
                 executed_trade[0] = 1
             else:
