@@ -42,13 +42,10 @@ class Market:
                 self.market_stocks[stock][1] = 0.0
 
     def update_time(self) -> None:
-        if self.time == 16:
-            for stock in self.market_stocks:
-                stock.set_open_price(stock.get_current_price())
+        self.time += 1
 
-            self.time = 9
-        else:
-            self.time += 1
+    def reset_time(self) -> None:
+        self.time = 9
 
     def reset_daily_performances(self) -> None:
         for stock in self.market_stocks:
@@ -104,8 +101,10 @@ def simulate_market(market: Market, num_days: int, trader) -> None:
 
         print("\nDay " + str(day + 1) + " - Market is now open!")
 
-        for hour in range(8):
-            market.update_time()
+        for stock in market.get_market_stocks():
+            stock.set_open_price(stock.get_current_price())
+
+        for _ in range(7):
             executed_trade: tuple[int, int, list[Stock]] = trader.trade() # tuple[bought or sold, num_shares, stock]
 
             if executed_trade[0] == 1:
@@ -114,16 +113,22 @@ def simulate_market(market: Market, num_days: int, trader) -> None:
                 for stock in executed_trade[2]:
                     print(str(market.get_time()) + ":00 - " + "Trader sold " + str(int(executed_trade[2][stock])) + " " + str(stock))
 
-            if hour < 7:
-                market.update_prices()
+            market.update_time()
+            market.update_prices()
 
         print("Market is now closed...")
 
         market.reset_daily_performances()
+        market.reset_time()
 
-        print(trader.get_trader_portfolio().get_portfolio_stocks())
-        print(trader.get_trader_portfolio().get_cash())
-        print(trader.get_trader_portfolio().get_returns())
+        owned_stocks: list[tuple[str, int]] = []
+        for stock in trader.get_trader_portfolio().get_portfolio_stocks():
+            if trader.get_trader_portfolio().get_portfolio_stocks()[stock][2] > 0:
+                owned_stocks.append((stock, trader.get_trader_portfolio().get_portfolio_stocks()[stock][2]))
+        print("Portfolio: " + str(owned_stocks))
+        print("Available Funds: $" + str(round(trader.get_trader_portfolio().get_cash(), 2)))
+        print("Total Value: $" + str(round(trader.get_trader_portfolio().get_total_value(), 2)))
+        print("Total Returns: $" + str(round(trader.get_trader_portfolio().get_returns(), 2)))
 
 def main():
     print(           
@@ -140,7 +145,7 @@ def main():
     num_days: int = int(input("Enter the number of days you would like to"
                               "\nrun the simulation: "))
     principal: float = float(input("Enter the amount of money you would like"
-                                   "\nthe trading bot to start with: "))
+                                   "\nthe trading bot to start with: $"))
 
     market_stocks: dict[Stock, list[float, float]] = generate_random_market_stocks(num_market_stocks)
     market: Market = Market(market_stocks)

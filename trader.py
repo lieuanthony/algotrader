@@ -35,43 +35,39 @@ class Trader:
 
             executed_trade: list[int, dict[Stock, int], dict[Stock, int]] = [0, bought_stocks, sold_stocks]
 
-            if current_price > open_price:
-                max_num_shares: int = self.portfolio.get_cash() // current_price
+            can_buy: bool = False
+            can_sell: bool = False
 
-                if (current_price > open_price * 1.05 or current_price == high_price) and (stock.get_name() in self.portfolio.get_portfolio_stocks() and self.portfolio.get_portfolio_stocks()[stock.get_name()][2] > 0):
-                    num_shares = portfolio_stocks[stock.get_name()][2]
-                    self.portfolio.sell_shares(stock, num_shares)
-                    sold_stocks[stock] = num_shares
-                    executed_trade[0] = 1
-                elif max_num_shares > 2 and current_price > open_price * 1.025 and current_price * max_num_shares <= self.portfolio.get_cash():
-                    num_shares = random.randint(1, max_num_shares)
-                    self.portfolio.buy_shares(stock, num_shares)
-                    bought_stocks[stock] = num_shares
-                    executed_trade[0] = 1
-                elif current_price * 2 <= self.portfolio.get_cash():
-                    num_shares = random.randint(1, 2)
-                    self.portfolio.buy_shares(stock, num_shares)
-                    bought_stocks[stock] = num_shares
-                    executed_trade[0] = 1
+            if self.portfolio.get_cash() // current_price > 0:
+                can_buy = True
+                max_num_buy_shares: int = self.portfolio.get_cash() // current_price
 
-            elif current_price < open_price and stock.get_name() in portfolio_stocks:
-                max_num_shares: int = portfolio_stocks[stock.get_name()][2]
-                
-                if (current_price < open_price * 0.95 or current_price == low_price) and current_price * (self.portfolio.get_cash() // current_price) <= self.portfolio.get_cash():
-                    num_shares = random.randint(1, (self.portfolio.get_cash() // current_price))
-                    self.portfolio.buy_shares(stock, num_shares)
-                    bought_stocks[stock] = num_shares
-                    executed_trade[0] = 1
-                elif max_num_shares > 2 and current_price < open_price * 1.025:
-                    num_shares = random.randint(1, max_num_shares)
-                    self.portfolio.sell_shares(1, max_num_shares)
-                    sold_stocks[stock] = num_shares
-                    executed_trade[0] = 1
-                elif max_num_shares > 0:
-                    num_shares = random.randint(1, 2)
-                    self.portfolio.sell_shares(1, 2)
-                    sold_stocks[stock] = num_shares
-                    executed_trade[0] = 1
+            if stock.get_name() in portfolio_stocks and portfolio_stocks[stock.get_name()][2] > 0:
+                can_sell = True;
+                max_num_sell_shares: int = portfolio_stocks[stock.get_name()][2]
+
+            if (current_price > open_price * 1.05 or current_price == high_price) and can_sell:
+                num_shares = portfolio_stocks[stock.get_name()][2]
+                self.portfolio.sell_shares(stock, num_shares)
+                sold_stocks[stock] = num_shares
+                executed_trade[0] = 1
+            elif current_price > open_price * 1.025 and can_buy:
+                num_shares = random.randint(1, max_num_buy_shares)
+                self.portfolio.buy_shares(stock, num_shares)
+                bought_stocks[stock] = num_shares
+                executed_trade[0] = 1
+            elif (current_price < open_price * 0.95 or current_price == low_price) and can_buy:
+                num_shares = random.randint(1, max_num_buy_shares)
+                self.portfolio.buy_shares(stock, num_shares)
+                bought_stocks[stock] = num_shares
+                executed_trade[0] = 1
+            elif current_price < open_price * 1.025 and can_sell:
+                num_shares = random.randint(1, max_num_sell_shares)
+                self.portfolio.sell_shares(1, max_num_sell_shares)
+                sold_stocks[stock] = num_shares
+                executed_trade[0] = 1
+            else:
+                continue
 
         self.portfolio.update_total_value() 
         self.portfolio.update_returns()
